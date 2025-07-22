@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Brain Out Quiz Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #ffe;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .game-container {
+      background: #fff;
+      padding: 20px;
+      border: 4px solid #f39c12;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #f1c40f;
+      max-width: 600px;
+      width: 90%;
+    }
+    h1 {
+      text-align: center;
+      color: #e67e22;
+    }
+    .question {
+      font-size: 1.3em;
+      margin-bottom: 15px;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 1em;
+      background-color: #f1c40f;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background-color: #f39c12;
+    }
+    .result {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>🧠 Brain Out Quiz</h1>
+    <div class="question" id="question">Loading...</div>
+    <div class="options" id="options"></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        q: "Which is heavier: 1kg of steel or 1kg of cotton?",
+        options: ["Steel", "Cotton", "Same weight", "None"],
+        answer: "Same weight"
+      },
+      {
+        q: "What can you catch but not throw?",
+        options: ["Ball", "Cold", "Shadow", "Smile"],
+        answer: "Cold"
+      },
+      {
+        q: "If you have 5 apples and you eat 2, how many do you have?",
+        options: ["2", "3", "5", "None"],
+        answer: "5"
+      },
+      {
+        q: "Which number is smallest?",
+        options: ["-1", "0", "1", "-100"],
+        answer: "-100"
+      },
+      {
+        q: "The word 'Spell' is spelled as?",
+        options: ["S-P-E-L", "Spell", "S-P-E-L-L", "Spall"],
+        answer: "Spell"
+      },
+      {
+        q: "Click the correct option: 2+2=",
+        options: ["22", "4", "Fish", "Window"],
+        answer: "4"
+      },
+      {
+        q: "Which one is different?",
+        options: ["Dog", "Cat", "Car", "Fish"],
+        answer: "Car"
+      },
+      {
+        q: "What gets wetter the more it dries?",
+        options: ["Towel", "Sun", "Rain", "Soap"],
+        answer: "Towel"
+      },
+      {
+        q: "Which month has 28 days?",
+        options: ["February", "All", "January", "None"],
+        answer: "All"
+      },
+      {
+        q: "Can a man marry his widow's sister?",
+        options: ["Yes", "No", "Maybe", "Depends"],
+        answer: "No"
+      },
+      {
+        q: "Which word is spelled incorrectly in every dictionary?",
+        options: ["Incorrectly", "Wrong", "Error", "Dictionary"],
+        answer: "Incorrectly"
+      },
+      {
+        q: "You put me on a table and cut me, but you don't eat me. What am I?",
+        options: ["Cake", "Map", "Deck of Cards", "Paper"],
+        answer: "Deck of Cards"
+      },
+      {
+        q: "Before Mt. Everest was discovered, what was the tallest mountain?",
+        options: ["K2", "Kanchenjunga", "Everest", "No one knew"],
+        answer: "Everest"
+      },
+      {
+        q: "If a plane crashes on the border of India and Nepal, where do you bury the survivors?",
+        options: ["India", "Nepal", "Don't bury survivors", "Both"],
+        answer: "Don't bury survivors"
+      },
+      {
+        q: "How many animals of each species did Moses take on the Ark?",
+        options: ["2", "4", "0", "Moses didn’t"],
+        answer: "Moses didn’t"
+      },
+      {
+        q: "How many times can you subtract 10 from 100?",
+        options: ["10", "1", "0", "9"],
+        answer: "1"
+      },
+      {
+        q: "What has a face and two hands but no arms or legs?",
+        options: ["Clock", "Man", "Robot", "Watch"],
+        answer: "Clock"
+      },
+      {
+        q: "If you throw a red stone into the blue sea what will it become?",
+        options: ["Wet", "Red", "Lost", "Dry"],
+        answer: "Wet"
+      },
+      {
+        q: "Which letter of the alphabet has the most water?",
+        options: ["C", "A", "B", "D"],
+        answer: "C"
+      },
+      {
+        q: "If you had only one match and entered a dark room with a lamp, oil heater and candle, what would you light first?",
+        options: ["Lamp", "Candle", "Heater", "Match"],
+        answer: "Match"
+      },
+      {
+        q: "How many fingers in 5 hands?",
+        options: ["25", "20", "10", "15"],
+        answer: "25"
+      },
+      {
+        q: "What has keys but can’t open locks?",
+        options: ["Locksmith", "Keyboard", "Piano", "Keychain"],
+        answer: "Piano"
+      },
+      {
+        q: "What comes once in a minute, twice in a moment, but never in a thousand years?",
+        options: ["Time", "M", "O", "E"],
+        answer: "M"
+      },
+      {
+        q: "Which day comes after Friday but before Sunday?",
+        options: ["Saturday", "Monday", "Today", "Yesterday"],
+        answer: "Saturday"
+      },
+      {
+        q: "I speak without a mouth and hear without ears. What am I?",
+        options: ["Echo", "Ghost", "Brain", "Wind"],
+        answer: "Echo"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      if (current >= quizData.length) {
+        document.getElementById('question').innerText = "🎉 Quiz Completed!";
+        document.getElementById('options').innerHTML = "";
+        document.getElementById('result').innerText = `Your Score: ${score} / ${quizData.length}`;
+        return;
+      }
+
+      const q = quizData[current];
+      document.getElementById('question').innerText = `Q${current + 1}: ${q.q}`;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => {
+          if (opt === q.answer) {
+            score++;
+          }
+          current++;
+          loadQuestion();
+        };
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
